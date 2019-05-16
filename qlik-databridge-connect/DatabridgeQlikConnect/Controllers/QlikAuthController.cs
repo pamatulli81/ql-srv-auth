@@ -27,9 +27,9 @@ namespace DatabridgeQlikConnect.Controllers
         [Route("AuthQlikSession")]
         [System.Web.Http.AcceptVerbs("POST")]
         [System.Web.Http.HttpGet]
-        public async Task <IHttpActionResult> AuthQlikSession(string method, string server, string virtualProxy, string user, string userdirectory)
+        public async Task <IHttpActionResult> AuthQlikSession(string method, string server, string virtualProxy, string user, string userdirectory, string [] certs)
         {
-            string session = Qlik.AuthQlikSession.GetSession(method, server, virtualProxy, user, userdirectory);
+            string session = Qlik.AuthQlikSession.GetSession(method, server, virtualProxy, user, userdirectory, certs);
 
             string[] getSessionArr = session.Split(new Char[] { ',' });
             string[] getSessionCode = getSessionArr[3].Split(new Char[] { ':' });
@@ -50,10 +50,10 @@ namespace DatabridgeQlikConnect.Controllers
         [Route("AuthQlikTicket")]
         [System.Web.Http.AcceptVerbs("POST")]
         [System.Web.Http.HttpGet]
-        public async Task<IHttpActionResult> AuthQlikTicket(string method, string server, string virtualProxy, string user, string userdirectory)
+        public async Task<IHttpActionResult> AuthQlikTicket(string method, string server, string virtualProxy, string user, string userdirectory, string [] certs)
         {
 
-            string ticket = Qlik.AuthTicket.GetTicket(method, server, virtualProxy, user, userdirectory);
+            string ticket = Qlik.AuthTicket.GetTicket(method, server, virtualProxy, user, userdirectory, certs);
             string[] getTicket = ticket.Split(new Char[] { ',' });
             string[] getTicketCode = getTicket[3].Split(new Char[] { ':' });
             string r = getTicketCode[1].Trim(new Char[] { '"' });

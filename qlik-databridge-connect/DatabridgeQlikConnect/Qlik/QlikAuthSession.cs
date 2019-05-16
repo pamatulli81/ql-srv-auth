@@ -13,13 +13,10 @@ namespace DatabridgeQlikConnect.Qlik
     public static class AuthQlikSession
     {
 
-        public static string GetSession(string method, string server, string virtualProxy, string user, string userdirectory)
+        public static string GetSession(string method, string server, string virtualProxy, string user, string userdirectory, string [] certs)
         {
-            X509Certificate2 certificateFoo = null;
-            X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-            store.Open(OpenFlags.ReadOnly);
-            certificateFoo = store.Certificates.Cast<X509Certificate2>().FirstOrDefault(c => c.FriendlyName == "QlikClient");
-            store.Close();
+           
+               
 
             //PAM: Ignore Certificate Error Message for Self Signed Certificates
             ServicePointManager.ServerCertificateValidationCallback = delegate {
@@ -30,7 +27,7 @@ namespace DatabridgeQlikConnect.Qlik
 
             string Xrfkey = Util.GenerateXrfKey();
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + "?Xrfkey=" + Xrfkey);
-            request.ClientCertificates.Add(certificateFoo);
+            request = Util.AddCertificates(request, certs);
             request.Method = method;
             request.Accept = "application/json";
             request.Headers.Add("X-Qlik-Xrfkey", Xrfkey);

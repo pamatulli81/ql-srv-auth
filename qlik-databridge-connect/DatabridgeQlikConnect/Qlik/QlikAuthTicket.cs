@@ -11,15 +11,9 @@ namespace DatabridgeQlikConnect.Qlik
 {
     public static class AuthTicket
     {
-        public static string GetTicket(string method, string server, string virtualProxy, string user, string userdirectory)
+        public static string GetTicket(string method, string server, string virtualProxy, string user, string userdirectory, string [] certs)
         {
-            X509Certificate2 certificateFoo = null;
-
-            X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            store.Open(OpenFlags.ReadOnly);
-            X509Certificate2Collection certs = store.Certificates;
-            certificateFoo = certs[0];
-
+           
             //PAM: Ignore Certificate Error Message for Self Signed Certificates
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
@@ -27,8 +21,8 @@ namespace DatabridgeQlikConnect.Qlik
 
             string Xrfkey = Util.GenerateXrfKey();
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + "?Xrfkey=" + Xrfkey);
-       
-            request.ClientCertificates.Add(certificateFoo);
+            request = Util.AddCertificates(request, certs);
+
             request.Method = method;
             request.Accept = "application/json";
             request.Headers.Add("X-Qlik-Xrfkey", Xrfkey);
